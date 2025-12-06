@@ -15,6 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * 'username'(아이디)으로 사용자를 조회합니다.
      * (로그인 시 사용)
+     * 
      * @param username (조회할 아이디)
      * @return Optional<User> (사용자가 없을 수도 있으므로 Optional로 감싸서 반환)
      */
@@ -23,9 +24,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * 'username'(아이디)이 DB에 이미 존재하는지 확인합니다.
      * (회원가입 시 아이디 중복 검사에 사용)
+     * 
      * @param username (검사할 아이디)
      * @return boolean (존재하면 true, 없으면 false)
      */
     boolean existsByUsername(String username);
-        
+
+    /**
+     * 'email'(이메일)로 사용자를 조회합니다.
+     * (소셜 로그인 시 사용)
+     */
+    Optional<User> findByEmail(String email);
+
 }

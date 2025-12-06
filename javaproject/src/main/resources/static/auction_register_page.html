@@ -1,278 +1,280 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>경매 등록 - 모의 경매 사이트</title>
-<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=6792"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<style>
-  body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding-bottom: 50px;
-  }
-  
-  .navbar {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-  }
-  
-  .navbar-brand {
-    font-weight: 700;
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    cursor: pointer;
-  }
-  
-  .nav-link {
-    color: #333 !important;
-    font-weight: 500;
-    margin: 0 10px;
-    transition: all 0.3s;
-    cursor: pointer;
-  }
-  
-  .nav-link:hover {
-    color: #667eea !important;
-    transform: translateY(-2px);
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>경매 등록 - 모의 경매 사이트</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-bottom: 50px;
+    }
 
-  .register-container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-  }
+    .navbar {
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
 
-  .register-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 40px;
-    text-align: center;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+    }
 
-  .register-header::before {
-    content: '';
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    top: -50px;
-    right: -50px;
-  }
+    .nav-link {
+      color: #333 !important;
+      font-weight: 500;
+      margin: 0 10px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
 
-  .register-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    position: relative;
-    z-index: 1;
-  }
+    .nav-link:hover {
+      color: #667eea !important;
+      transform: translateY(-2px);
+    }
 
-  .register-header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    position: relative;
-    z-index: 1;
-  }
+    .register-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
 
-  .register-body {
-    padding: 50px;
-  }
+    .register-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
 
-  .form-section {
-    margin-bottom: 35px;
-  }
-
-  .section-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 3px solid #667eea;
-    display: flex;
-    align-items: center;
-  }
-
-  .section-title i {
-    margin-right: 10px;
-    color: #667eea;
-  }
-
-  .form-label {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
-    display: block;
-    font-size: 0.95rem;
-  }
-
-  .required {
-    color: #ff6b6b;
-    margin-left: 3px;
-  }
-
-  .form-control, .form-select {
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    transition: all 0.3s;
-  }
-
-  .form-control:focus, .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
-  }
-
-  textarea.form-control {
-    min-height: 120px;
-    resize: vertical;
-  }
-
-  .input-group-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    font-weight: 600;
-  }
-
-  .image-upload-area {
-    border: 3px dashed #e0e0e0;
-    border-radius: 15px;
-    padding: 40px;
-    text-align: center;
-    transition: all 0.3s;
-    cursor: pointer;
-    background: #f8f9fa;
-  }
-
-  .image-upload-area:hover {
-    border-color: #667eea;
-    background: #f0f4ff;
-  }
-
-  .image-upload-area.dragover {
-    border-color: #667eea;
-    background: #e8f0ff;
-  }
-
-  .image-upload-area i {
-    font-size: 3rem;
-    color: #667eea;
-    margin-bottom: 15px;
-  }
-
-  .image-preview {
-    margin-top: 20px;
-    display: none;
-  }
-
-  .image-preview img {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-  }
-
-  .remove-image-btn {
-    margin-top: 10px;
-    padding: 8px 20px;
-    border-radius: 20px;
-    background: #ff6b6b;
-    color: white;
-    border: none;
-    font-size: 0.9rem;
-    transition: all 0.3s;
-  }
-
-  .remove-image-btn:hover {
-    background: #ff5252;
-    transform: translateY(-2px);
-  }
-
-  .btn-register {
-    width: 100%;
-    padding: 18px;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    color: white;
-    font-weight: 700;
-    font-size: 1.2rem;
-    transition: all 0.3s;
-    margin-top: 30px;
-  }
-
-  .btn-register:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-  }
-
-  .btn-cancel {
-    width: 100%;
-    padding: 18px;
-    border-radius: 15px;
-    background: #6c757d;
-    border: none;
-    color: white;
-    font-weight: 700;
-    font-size: 1.2rem;
-    transition: all 0.3s;
-    margin-top: 15px;
-  }
-
-  .btn-cancel:hover {
-    background: #5a6268;
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(108, 117, 125, 0.4);
-  }
-
-  .info-box {
-    background: #f0f4ff;
-    border-left: 4px solid #667eea;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-  }
-
-  .info-box i {
-    color: #667eea;
-    margin-right: 10px;
-  }
-
-  .info-box p {
-    margin: 0;
-    color: #666;
-    font-size: 0.9rem;
-  }
-
-  @media (max-width: 768px) {
-    .register-body {
-      padding: 30px 20px;
+    .register-header::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      top: -50px;
+      right: -50px;
     }
 
     .register-header h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
     }
-  }
-</style>
+
+    .register-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+
+    .register-body {
+      padding: 50px;
+    }
+
+    .form-section {
+      margin-bottom: 35px;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #667eea;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title i {
+      margin-right: 10px;
+      color: #667eea;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .required {
+      color: #ff6b6b;
+      margin-left: 3px;
+    }
+
+    .form-control,
+    .form-select {
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .input-group-text {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      font-weight: 600;
+    }
+
+    .image-upload-area {
+      border: 3px dashed #e0e0e0;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+      background: #f8f9fa;
+    }
+
+    .image-upload-area:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .image-upload-area.dragover {
+      border-color: #667eea;
+      background: #e8f0ff;
+    }
+
+    .image-upload-area i {
+      font-size: 3rem;
+      color: #667eea;
+      margin-bottom: 15px;
+    }
+
+    .image-preview {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .image-preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .remove-image-btn {
+      margin-top: 10px;
+      padding: 8px 20px;
+      border-radius: 20px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .remove-image-btn:hover {
+      background: #ff5252;
+      transform: translateY(-2px);
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 18px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+      margin-top: 30px;
+    }
+
+    .btn-register:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-cancel {
+      width: 100%;
+      padding: 18px;
+      border-radius: 15px;
+      background: #6c757d;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+      margin-top: 15px;
+    }
+
+    .btn-cancel:hover {
+      background: #5a6268;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(108, 117, 125, 0.4);
+    }
+
+    .info-box {
+      background: #f0f4ff;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .info-box i {
+      color: #667eea;
+      margin-right: 10px;
+    }
+
+    .info-box p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .register-body {
+        padding: 30px 20px;
+      }
+
+      .register-header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <!-- 네비게이션 바 -->
   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="auction_site_main.html">
@@ -297,7 +299,6 @@
     </div>
   </nav>
 
-  <!-- 경매 등록 폼 -->
   <div class="register-container">
     <div class="register-header">
       <h1><i class="bi bi-plus-circle-fill"></i> 경매 등록하기</h1>
@@ -306,7 +307,6 @@
 
     <div class="register-body">
       <form id="auctionRegisterForm">
-        <!-- 기본 정보 섹션 -->
         <div class="form-section">
           <div class="section-title">
             <i class="bi bi-info-circle-fill"></i>
@@ -338,7 +338,6 @@
           </div>
         </div>
 
-        <!-- 가격 및 경매 설정 -->
         <div class="form-section">
           <div class="section-title">
             <i class="bi bi-cash-stack"></i>
@@ -371,7 +370,8 @@
             <div class="col-md-6">
               <label class="form-label">입찰 단위<span class="required">*</span></label>
               <div class="input-group">
-                <input type="number" class="form-control" id="bidIncrement" placeholder="1000" value="1000" min="100" required>
+                <input type="number" class="form-control" id="bidIncrement" placeholder="1000" value="1000" min="100"
+                  required>
                 <span class="input-group-text">P</span>
               </div>
             </div>
@@ -379,6 +379,7 @@
               <label class="form-label">경매 기간<span class="required">*</span></label>
               <select class="form-select" id="duration" required>
                 <option value="" selected disabled>기간 선택</option>
+                <option value="0.0166667">1분 (테스트용)</option>
                 <option value="1">1시간</option>
                 <option value="3">3시간</option>
                 <option value="6">6시간</option>
@@ -391,7 +392,6 @@
           </div>
         </div>
 
-        <!-- 이미지 업로드 -->
         <div class="form-section">
           <div class="section-title">
             <i class="bi bi-image-fill"></i>
@@ -419,7 +419,6 @@
           </div>
         </div>
 
-        <!-- 버튼 -->
         <button type="submit" class="btn btn-register">
           <i class="bi bi-check-circle-fill"></i> 경매 등록하기
         </button>
@@ -435,37 +434,29 @@
     // ==========================================================
     // ⭐ 1. 페이지 로드 시 'localStorage'에서 로그인 정보 확인
     // ==========================================================
-    window.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('DOMContentLoaded', function () {
       const userId = localStorage.getItem('userId');
       const username = localStorage.getItem('username');
-      
-      // (핵심) userId가 없으면(로그인 안 됨) 로그인 페이지로 보냅니다.
+
       if (!userId) {
-          alert('경매를 등록하려면 로그인이 필요합니다.');
-          window.location.href = 'login.html';
-          return; // 이 페이지의 나머지 스크립트 실행 중단
+        alert('경매를 등록하려면 로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
       }
-      
-      // 네비게이션 바 업데이트
       updateNavLinks(username);
     });
 
-    // ==========================================================
-    // ⭐ 2. (신규) 네비게이션 링크 업데이트 함수
-    // ==========================================================
     function updateNavLinks(username) {
-        // '내 정보' 링크를 '사용자이름님'으로 변경
-        const myInfoLink = document.querySelector('a[href*="auction_mypage.html"]');
-        if (myInfoLink && username) {
-            myInfoLink.innerHTML = `<i class="bi bi-person-circle"></i> ${username}님`;
-        }
+      const myInfoLink = document.querySelector('a[href*="auction_mypage.html"]');
+      if (myInfoLink && username) {
+        myInfoLink.innerHTML = `<i class="bi bi-person-circle"></i> ${username}님`;
+      }
     }
 
     // ==========================================================
-    // (이하는 기존 경매 등록 스크립트)
+    // API 설정
     // ==========================================================
-    
-    const API_BASE_URL = 'http://localhost:8080/api';
+    const API_BASE_URL = '/api';
     const AUCTION_REGISTER_API = `${API_BASE_URL}/auctions/register`;
 
     // ==========================================================
@@ -477,17 +468,14 @@
     const previewImg = document.getElementById('previewImg');
     let uploadedImageFile = null;
 
-    // 클릭으로 파일 선택
     imageUploadArea.addEventListener('click', () => {
       imageInput.click();
     });
 
-    // 파일 선택 이벤트
     imageInput.addEventListener('change', (e) => {
       handleImageFile(e.target.files[0]);
     });
 
-    // 드래그 앤 드롭
     imageUploadArea.addEventListener('dragover', (e) => {
       e.preventDefault();
       imageUploadArea.classList.add('dragover');
@@ -500,30 +488,21 @@
     imageUploadArea.addEventListener('drop', (e) => {
       e.preventDefault();
       imageUploadArea.classList.remove('dragover');
-      
       const file = e.dataTransfer.files[0];
       handleImageFile(file);
     });
 
-    // 이미지 파일 처리
     function handleImageFile(file) {
       if (!file) return;
-
-      // 파일 타입 검증
       if (!file.type.startsWith('image/')) {
         alert('이미지 파일만 업로드 가능합니다.');
         return;
       }
-
-      // 파일 크기 검증 (5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('파일 크기는 5MB 이하여야 합니다.');
         return;
       }
-
       uploadedImageFile = file;
-
-      // 미리보기 생성
       const reader = new FileReader();
       reader.onload = (e) => {
         previewImg.src = e.target.result;
@@ -533,7 +512,6 @@
       reader.readAsDataURL(file);
     }
 
-    // 이미지 제거
     function removeImage() {
       uploadedImageFile = null;
       imagePreview.style.display = 'none';
@@ -542,19 +520,18 @@
     }
 
     // ==========================================================
-    // 폼 제출 처리 (⭐ sellerId 추가됨)
+    // ⭐ 폼 제출 처리 (시간 계산 로직 수정됨)
     // ==========================================================
     const auctionRegisterForm = document.getElementById('auctionRegisterForm');
 
-    auctionRegisterForm.addEventListener('submit', async function(e) {
+    auctionRegisterForm.addEventListener('submit', async function (e) {
       e.preventDefault();
 
-      // ⭐ (중요) 등록하는 사람(판매자)의 ID를 localStorage에서 가져옵니다.
       const sellerId = localStorage.getItem('userId');
       if (!sellerId) {
-          alert('로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
-          window.location.href = 'login.html';
-          return;
+        alert('로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
+        window.location.href = 'login.html';
+        return;
       }
 
       // 1. 폼 데이터 수집
@@ -564,7 +541,7 @@
       const startingPrice = parseInt(document.getElementById('startingPrice').value);
       const buyNowPrice = document.getElementById('buyNowPrice').value ? parseInt(document.getElementById('buyNowPrice').value) : null;
       const bidIncrement = parseInt(document.getElementById('bidIncrement').value);
-      const duration = parseInt(document.getElementById('duration').value);
+      const duration = parseFloat(document.getElementById('duration').value); // Parse as float for minute calculation
 
       // 2. 유효성 검사
       if (!title || !category || !description) {
@@ -580,11 +557,29 @@
         return;
       }
 
-      // 3. 종료 시간 계산
+      // =========================================================================
+      // ⭐ [핵심 수정] 시간 문제 해결 코드
+      // =========================================================================
       const endTime = new Date();
-      endTime.setHours(endTime.getHours() + duration);
+      
+      // 0.0166667 is approx 1/60 hours (1 minute)
+      if (duration < 1) { 
+          endTime.setMinutes(endTime.getMinutes() + 1);
+      } else {
+          endTime.setHours(endTime.getHours() + duration);
+      }
 
-      // 4. FormData 생성 (이미지 파일 포함)
+      // 1. 오프셋 계산 (분 단위 * 60000 = 밀리초)
+      // 한국(KST)의 경우 offset은 -540분(-9시간)
+      const offset = endTime.getTimezoneOffset() * 60000;
+
+      // 2. 현재 시간에서 오프셋을 빼면, UTC 기준으로는 9시간 미래의 시간이 됨.
+      // toISOString()을 하면 다시 9시간을 까먹지만, 결과적으로 숫자는 "한국 시간"으로 나옴.
+      const localEndTime = new Date(endTime.getTime() - offset);
+
+      const endTimeString = localEndTime.toISOString(); // 예: "2023-11-29T14:00:00.000Z" (실제 한국시간 14시)
+
+      // 4. FormData 생성
       const formData = new FormData();
       formData.append('title', title);
       formData.append('category', category);
@@ -594,21 +589,17 @@
         formData.append('buyNowPrice', buyNowPrice);
       }
       formData.append('bidIncrement', bidIncrement);
-      formData.append('endTime', endTime.toISOString());
-      
-      // ⭐ (수정) 백엔드에 누가 등록했는지 sellerId(userId)를 함께 보냅니다.
-      formData.append('sellerId', sellerId); 
-      
+      formData.append('endTime', endTimeString); // ⭐ 수정된 시간 전송
+      formData.append('sellerId', sellerId);
+
       if (uploadedImageFile) {
         formData.append('image', uploadedImageFile);
       }
 
       try {
-        // 5. 백엔드 API 호출
         const response = await fetch(AUCTION_REGISTER_API, {
           method: 'POST',
           body: formData
-          // (참고: 백엔드는 이 요청을 처리할 때 'sellerId' 파라미터를 받도록 수정해야 합니다)
         });
 
         const responseData = await response.json();
@@ -626,19 +617,13 @@
       }
     });
 
-    // ==========================================================
-    // 취소 버튼
-    // ==========================================================
     function cancelRegister() {
       if (confirm('작성중인 내용이 사라집니다. 취소하시겠습니까?')) {
         window.location.href = 'auction_site_main.html';
       }
     }
 
-    // ==========================================================
-    // 즉시구매가 자동 검증
-    // ==========================================================
-    document.getElementById('buyNowPrice').addEventListener('blur', function() {
+    document.getElementById('buyNowPrice').addEventListener('blur', function () {
       const startingPrice = parseInt(document.getElementById('startingPrice').value);
       const buyNowPrice = parseInt(this.value);
 
@@ -649,4 +634,5 @@
     });
   </script>
 </body>
+
 </html>

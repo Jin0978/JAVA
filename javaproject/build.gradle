@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.6'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.2.2'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'com.javaprgraming'
@@ -33,6 +33,14 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+    // ⭐ [추가] 웹소켓 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // ⭐ [추가] OAuth2 클라이언트 라이브러리 (구글/깃허브 로그인)
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // IDE Refresh Trigger
 }
 
 tasks.named('test') {

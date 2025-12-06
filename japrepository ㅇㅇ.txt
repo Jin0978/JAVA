@@ -1,0 +1,13 @@
+JpaRepository를 상속하면:구현 클래스는 Spring이 자동으로 만들어줌
+
+userRepository.save(user);              // 저장 (INSERT)
+userRepository.findById(1L);            // ID로 찾기 (SELECT WHERE id=1)
+userRepository.findAll();               // 전체 조회 (SELECT * FROM users)
+userRepository.deleteById(1L);          // 삭제 (DELETE WHERE id=1)
+userRepository.count();                 // 개수 세기 (SELECT COUNT(*))
+userRepository.existsById(1L);          // 존재 여부 확인
+
+Optional<User> findByUsername(String username);
+이 메서드는 이름만 정해주면, Spring이 메서드 이름을 분석해서 자동으로 SQL 쿼리를 만들어줌
+
+Spring이 애플리케이션 실행 시 UserRepositoryImpl 같은 구현체를 자동으로 생성해서 Bean으로 등록합니다. 그래서 여러분은 컨트롤러에서 @Autowired나 생성자로 바로 주입받아 사용할 수 있는 것입니다!​

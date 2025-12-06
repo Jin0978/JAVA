@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>관리자 페이지 - 모의 경매 사이트</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 50px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+        }
+
+        .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            margin: 0 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #667eea !important;
+            transform: translateY(-2px);
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            min-height: 600px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .btn-action {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="auction_site_main.html">
+                <i class="bi bi-hammer me-2"></i>Auction Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="auction_site_main.html">메인으로</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">로그아웃</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="section-card">
+            <div class="section-title">
+                <i class="bi bi-gear-fill"></i> 관리자 대시보드
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('items')">물품 관리</button>
+                <button class="tab-btn" onclick="showTab('users')">유저 관리</button>
+            </div>
+
+            <!-- 물품 관리 탭 -->
+            <div id="items-tab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="m-0"><i class="bi bi-box-seam me-2"></i>등록된 물품 목록</h4>
+                    <button class="btn btn-outline-primary btn-sm" onclick="loadItems()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>새로고침
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>이미지</th>
+                                <th>상품명</th>
+                                <th>현재가</th>
+                                <th>판매자</th>
+                                <th>상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-table-body">
+                            <!-- 자바스크립트로 데이터 로드 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 유저 관리 탭 -->
+            <div id="users-tab" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="m-0"><i class="bi bi-people me-2"></i>가입된 유저 목록</h4>
+                    <button class="btn btn-outline-primary btn-sm" onclick="loadUsers()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>새로고침
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>이름</th>
+                                <th>이메일</th>
+                                <th>포인트</th>
+                                <th></th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- 자바스크립트로 데이터 로드 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAuth();
+            loadItems();
+        });
+
+        // 관리자 권한 체크 (간단히 localStorage의 role 확인)
+        function checkAdminAuth() {
+            const userRole = localStorage.getItem('userRole');
+            if (userRole !== 'ADMIN') {
+                alert('관리자 권한이 필요합니다.');
+                window.location.href = 'auction_site_main.html';
+            }
+        }
+
+        // 탭 전환 함수
+        function showTab(tabName) {
+            const itemsTab = document.getElementById('items-tab');
+            const usersTab = document.getElementById('users-tab');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            if (tabName === 'items') {
+                itemsTab.style.display = 'block';
+                usersTab.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+                loadItems();
+            } else {
+                itemsTab.style.display = 'none';
+                usersTab.style.display = 'block';
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+                loadUsers();
+            }
+        }
+
+        // 물품 목록 로드
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/admin/items');
+                if (!response.ok) throw new Error('물품 목록을 불러오는데 실패했습니다.');
+                const items = await response.json();
+                renderItems(items);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('물품 목록 로드 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 물품 목록 렌더링
+        function renderItems(items) {
+            const tbody = document.getElementById('items-table-body');
+            tbody.innerHTML = '';
+
+            items.forEach((item, index) => {
+                const tr = document.createElement('tr');
+
+                // 상태 한글화
+                let statusText = '진행중';
+                let statusClass = 'badge bg-success';
+
+                const now = new Date();
+                const endTime = new Date(item.auctionEndTime);
+
+                if (item.status === 'CANCELLED') {
+                    statusText = '취소됨';
+                    statusClass = 'badge bg-danger';
+                } else if (item.status === 'SOLD' || item.status === 'CLOSED' || endTime <= now) {
+                    statusText = '종료';
+                    statusClass = 'badge bg-secondary';
+                }
+
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><img src="${item.imageUrl || 'https://via.placeholder.com/50'}" alt="상품" width="50" height="50" style="object-fit: cover; border-radius: 5px;"></td>
+                    <td>${item.name}</td>
+                    <td>${item.currentPrice.toLocaleString()} P</td>
+                    <td>${item.sellerUsername}</td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn btn-danger btn-action" onclick="deleteItem(${item.id})">
+                            <i class="bi bi-trash"></i> 삭제
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 물품 삭제
+        async function deleteItem(itemId) {
+            if (!confirm('정말로 이 물품을 삭제하시겠습니까?')) return;
+
+            try {
+                const response = await fetch(`/api/admin/items/${itemId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('물품이 삭제되었습니다.');
+                    loadItems();
+                } else {
+                    alert(result.message || '삭제 실패');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('물품 삭제 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 유저 목록 로드
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users');
+                if (!response.ok) throw new Error('유저 목록을 불러오는데 실패했습니다.');
+                const users = await response.json();
+                renderUsers(users);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('유저 목록 로드 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 유저 목록 렌더링
+        function renderUsers(users) {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+
+            // 관리자 계정 숨기기 필터링
+            const filteredUsers = users.filter(user => user.role !== 'ADMIN');
+
+            filteredUsers.forEach((user, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="number" class="form-control" value="${user.points}" id="points-${user.id}">
+                            <button class="btn btn-outline-secondary" type="button" onclick="updatePoints(${user.id})">수정</button>
+                        </div>
+                    </td>
+                    <td>${user.role}</td>
+                    <td>
+                        <button class="btn btn-danger btn-action" onclick="forceWithdraw(${user.id})">
+                            <i class="bi bi-person-x"></i> 강제 탈퇴
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 포인트 수정
+        async function updatePoints(userId) {
+            const pointsInput = document.getElementById(`points-${userId}`);
+            const newPoints = pointsInput.value;
+
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/points`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ points: parseInt(newPoints) })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('포인트가 수정되었습니다.');
+                } else {
+                    alert(result.message || '수정 실패');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('포인트 수정 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 강제 탈퇴
+        async function forceWithdraw(userId) {
+            if (!confirm('이 사용자를 강제로 탈퇴시키겠습니까? (되돌릴 수 없습니다)')) return;
+
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('사용자가 강제 탈퇴 처리되었습니다.');
+                    loadUsers();
+                } else {
+                    alert(result.message || '탈퇴 처리 실패');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다.');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            localStorage.removeItem('userRole');
+            alert('로그아웃 되었습니다.');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>

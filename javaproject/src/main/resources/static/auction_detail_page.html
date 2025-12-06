@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>상품 상세 - 모의 경매 사이트</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+    }
+
+    .nav-link {
+      color: #333 !important;
+      font-weight: 500;
+      margin: 0 10px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      color: #667eea !important;
+      transform: translateY(-2px);
+    }
+
+    .main-container {
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    .breadcrumb-section {
+      background: white;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .breadcrumb {
+      margin: 0;
+    }
+
+    .breadcrumb-item a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .product-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .product-image {
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      max-height: 500px;
+      object-fit: contain;
+      background: #f8f9fa;
+    }
+
+    .thumbnail-container {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .thumbnail {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .thumbnail:hover,
+    .thumbnail.active {
+      border-color: #667eea;
+      transform: scale(1.05);
+    }
+
+    .product-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .product-category {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .price-box {
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .current-price-label {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .current-price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+    }
+
+    .price-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .price-info-row:first-child {
+      border-top: none;
+    }
+
+    .info-label {
+      color: #666;
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: #333;
+      font-weight: 600;
+    }
+
+    .timer-box {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+      color: white;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .timer-label {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .timer {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+
+    .bid-input-group {
+      margin-bottom: 20px;
+    }
+
+    .bid-input {
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .bid-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+
+    .quick-bid-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .quick-bid-btn {
+      padding: 10px;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .quick-bid-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-place-bid {
+      width: 100%;
+      padding: 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+      margin-bottom: 15px;
+    }
+
+    .btn-place-bid:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-wishlist {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-wishlist:hover {
+      background: #f8f9ff;
+    }
+
+    .tabs-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-tabs {
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .nav-tabs .nav-link {
+      color: #666 !important;
+      border: none;
+      font-weight: 600;
+      padding: 15px 25px;
+      transition: all 0.3s;
+    }
+
+    .nav-tabs .nav-link:hover {
+      color: #667eea !important;
+    }
+
+    .nav-tabs .nav-link.active {
+      color: #667eea !important;
+      border-bottom: 3px solid #667eea;
+      background: none;
+    }
+
+    .tab-content {
+      padding: 25px 0;
+    }
+
+    .description-text {
+      line-height: 1.8;
+      color: #555;
+    }
+
+    .spec-table {
+      width: 100%;
+    }
+
+    .spec-table tr {
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .spec-table td {
+      padding: 15px 10px;
+    }
+
+    .spec-table td:first-child {
+      color: #666;
+      font-weight: 600;
+      width: 30%;
+    }
+
+    .bid-history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .bid-history-item:last-child {
+      border-bottom: none;
+    }
+
+    .bidder-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bidder-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+    }
+
+    .bid-price {
+      font-weight: 700;
+      color: #667eea;
+      font-size: 1.1rem;
+    }
+
+    .bid-time {
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .product-title {
+        font-size: 1.5rem;
+      }
+
+      .current-price {
+        font-size: 2rem;
+      }
+
+      .quick-bid-buttons {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="auction_site_main.html"><i class="bi bi-hammer"></i> 모의 경매</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
+          class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="auction_site_main.html"><i class="bi bi-house-door"></i> 홈</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="auction_register_page.html"><i class="bi bi-plus-circle"></i>
+              경매 등록하기</a></li>
+          <li class="nav-item"><a class="nav-link" href="auction_mypage.html"><i class="bi bi-person-circle"></i> 내
+              정보</a></li>
+          <li class="nav-item"><a class="nav-link" href="points.html"><i class="bi bi-wallet2"></i> 내 포인트</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container main-container">
+    <div class="breadcrumb-section">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="auction_site_main.html">홈</a></li>
+          <li class="breadcrumb-item"><a href="#">카테고리</a></li>
+          <li class="breadcrumb-item active product-title-breadcrumb">상품명</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="product-section">
+          <img src="https://via.placeholder.com/600x450?text=Loading..." alt="상품 이미지" class="product-image"
+            id="mainImage">
+          <div class="thumbnail-container" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="product-section">
+          <span class="product-category"><i class="bi bi-tag"></i> 카테고리</span>
+          <h1 class="product-title">상품명 로딩중...</h1>
+
+          <div class="timer-box">
+            <div class="timer-label"><i class="bi bi-alarm"></i> 경매 종료까지</div>
+            <div class="timer" id="timer">--:--:--</div>
+          </div>
+
+          <div class="price-box">
+            <div class="current-price-label">현재 입찰가</div>
+            <div class="current-price" id="currentPrice">0원</div>
+            <div class="price-info-row">
+              <span class="info-label">시작가</span>
+              <span class="info-value start-price">0원</span>
+            </div>
+            <div class="price-info-row">
+              <span class="info-label">입찰 단위</span>
+              <span class="info-value bid-increment">0원</span>
+            </div>
+            <span class="info-value" id="auctionStatus">진행중</span>
+          </div>
+          <!-- ⭐ [추가] 즉시구매가 표시 영역 -->
+          <div class="price-info-row" id="buyNowPriceRow" style="display: none;">
+            <span class="info-label text-danger fw-bold">즉시 구매가</span>
+            <span class="info-value text-danger fw-bold" id="buyNowPriceDisplay">0원</span>
+          </div>
+        </div>
+
+        <div class="bid-input-group">
+          <label class="form-label fw-bold"><i class="bi bi-cash-coin"></i> 입찰 금액</label>
+          <input type="text" class="form-control bid-input" id="bidAmount" placeholder="입찰 금액을 입력하세요">
+        </div>
+
+        <div class="quick-bid-buttons">
+          <button class="quick-bid-btn" onclick="quickBid(1000)">+1,000원</button>
+          <button class="quick-bid-btn" onclick="quickBid(10000)">+10,000원</button>
+          <button class="quick-bid-btn" onclick="quickBid(50000)">+50,000원</button>
+        </div>
+
+        <button class="btn btn-place-bid" onclick="placeBid()">
+          <i class="bi bi-hammer"></i> 입찰하기
+        </button>
+
+        <!-- ⭐ [추가] 즉시 구매 버튼 -->
+        <button class="btn btn-danger w-100 mb-3" id="btnBuyNow"
+          style="display: none; padding: 15px; font-size: 1.1rem; font-weight: bold;" onclick="buyNow()">
+          <i class="bi bi-lightning-fill"></i> 즉시 구매하기
+        </button>
+
+        <button class="btn btn-wishlist">
+          <i class="bi bi-heart"></i> 관심상품 등록
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs-section">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#description" type="button">
+          <i class="bi bi-file-text"></i> 상품 설명
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#bidHistoryTab" type="button">
+          <i class="bi bi-clock-history"></i> 입찰 내역
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="description" role="tabpanel">
+        <div class="description-text">
+          <h5>상품 설명</h5>
+          <p id="itemDescription">상품 설명이 로딩 중입니다...</p>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="bidHistoryTab" role="tabpanel">
+        <div id="bidHistory">
+          <p class="text-center text-muted p-3">아직 입찰 내역이 없습니다. 첫 번째 입찰자가 되어보세요!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+  <script>
+    let stompClient = null;
+    let currentItem = null;
+    let currentUserPoints = 0;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const auctionId = urlParams.get('id');
+    const userId = localStorage.getItem('userId');
+    const username = localStorage.getItem('username');
+
+    document.addEventListener('DOMContentLoaded', function () {
+      if (username) updateNavLinks(username);
+      if (userId) fetchUserPoints();
+
+      if (auctionId) {
+        loadItemDetail(auctionId);
+        loadBidHistory(auctionId); // ⭐ [추가] 기록 불러오기 함수 실행
+        connect();
+      } else {
+        alert("잘못된 접근입니다. 상품 ID가 없습니다.");
+        window.location.href = 'auction_site_main.html';
+      }
+    });
+
+    function updateNavLinks(username) {
+      const myInfoLink = document.querySelector('a[href*="auction_mypage.html"]');
+      if (myInfoLink) myInfoLink.innerHTML = `<i class="bi bi-person-circle"></i> ${username}님`;
+    }
+
+    async function fetchUserPoints() {
+      try {
+        const res = await fetch(`/api/auth/user/${userId}`);
+        const data = await res.json();
+        if (data.success) {
+          currentUserPoints = data.points || 0;
+        }
+      } catch (e) { console.error("포인트 조회 실패:", e); }
+    }
+
+    // ⭐ [추가] 입찰 내역 불러오기 (새로고침 해도 유지됨)
+    async function loadBidHistory(id) {
+      try {
+        const res = await fetch(`/api/auctions/${id}/bids`);
+        if (res.ok) {
+          const historyList = await res.json();
+          // 기록이 있으면 화면에 하나씩 추가
+          // (최신순으로 오기 때문에 reverse해서 아래부터 쌓거나, 그냥 forEach로 돌림)
+          // 여기서는 updateBidInfo를 재활용하거나 직접 HTML을 만듦
+          if (historyList.length > 0) {
+            document.getElementById('bidHistory').innerHTML = ''; // "내역 없음" 삭제
+            historyList.forEach(bid => {
+              addHistoryToDom(bid);
+            });
+          }
+        }
+      } catch (e) { console.error("입찰 내역 로드 실패:", e); }
+    }
+
+    async function loadItemDetail(id) {
+      try {
+        const response = await fetch(`/api/auctions/${id}`);
+        if (!response.ok) throw new Error('상품 정보를 불러올 수 없습니다.');
+
+        const item = await response.json();
+        currentItem = item;
+
+        document.querySelector('.product-title').textContent = item.name;
+        document.querySelector('.product-title-breadcrumb').textContent = item.name;
+        document.querySelector('.product-category').innerHTML = `<i class="bi bi-tag"></i> ${item.category || '기타'}`;
+        document.getElementById('itemDescription').innerText = item.description || '내용 없음';
+        document.getElementById('auctionStatus').innerText = (item.status === 'ON_AUCTION') ? '진행중' : '종료됨';
+
+        const currentPrice = item.currentPrice || item.startPrice;
+        document.getElementById('currentPrice').innerText = formatPrice(currentPrice);
+        document.querySelector('.start-price').innerText = formatPrice(item.startPrice);
+        document.querySelector('.bid-increment').innerText = formatPrice(item.bidIncrement);
+        document.querySelector('.bid-increment').innerText = formatPrice(item.bidIncrement);
+        document.getElementById('bidAmount').value = formatPrice(currentPrice + item.bidIncrement).replace('원', '');
+
+        // ⭐ [추가] 즉시구매가 표시 로직
+        if (item.buyNowPrice && item.buyNowPrice > 0) {
+          document.getElementById('buyNowPriceRow').style.display = 'flex';
+          document.getElementById('buyNowPriceDisplay').innerText = formatPrice(item.buyNowPrice);
+
+          // 내가 올린 물건이 아니라면 구매 버튼 표시 (상태가 ON_AUCTION일 때만)
+          if (item.status === 'ON_AUCTION' && item.sellerUsername !== username) {
+            document.getElementById('btnBuyNow').style.display = 'block';
+          }
+        }
+
+        const imgElement = document.getElementById('mainImage');
+        if (item.imageUrl) imgElement.src = item.imageUrl;
+        else imgElement.src = "https://via.placeholder.com/600x450?text=No+Image";
+
+        startTimer(item.auctionEndTime);
+
+      } catch (error) {
+        console.error(error);
+        alert("상품 정보를 가져오는 데 실패했습니다.");
+      }
+    }
+
+    function connect() {
+      // ⭐ [수정] localhost 대신 현재 접속 주소 사용 (다른 기기 접속 호환)
+      const socket = new SockJS('/ws');
+      stompClient = Stomp.over(socket);
+
+      stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/auction/' + auctionId, function (response) {
+          const bidData = JSON.parse(response.body);
+          updateBidInfo(bidData);
+        });
+      }, function (error) {
+        console.error('웹소켓 연결 실패:', error);
+      });
+    }
+
+    function placeBid() {
+      if (!userId) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const inputPrice = document.getElementById('bidAmount').value.replace(/,/g, '');
+      const bidAmount = parseInt(inputPrice);
+      const currentPriceText = document.getElementById('currentPrice').innerText.replace(/,/g, '').replace('원', '');
+      const currentPrice = parseInt(currentPriceText);
+
+      if (isNaN(bidAmount)) { alert('올바른 금액을 입력해주세요.'); return; }
+      if (bidAmount <= currentPrice) {
+        alert(`현재가(${formatPrice(currentPrice)})보다 높은 금액을 입찰해야 합니다.`);
+        return;
+      }
+
+      // 포인트 확인
+      if (bidAmount > currentUserPoints) {
+        alert("돈이 부족합니다.");
+        return;
+      }
+
+      // 자가 입찰 방지 (클라이언트 측)
+      // currentItem.sellerUsername 또는 sellerId가 있다면 비교 가능
+      // Item 엔티티에 sellerUsername이 있으므로 이를 활용
+      if (currentItem && currentItem.sellerUsername === username) {
+        alert("본인의 물건에는 입찰할 수 없습니다.");
+        return;
+      }
+
+      if (!confirm(`${formatPrice(bidAmount)}으로 입찰하시겠습니까?`)) return;
+
+      const bidRequest = {
+        auctionId: auctionId,
+        bidderId: userId,
+        bidAmount: bidAmount
+      };
+
+      stompClient.send("/app/bid/" + auctionId, {}, JSON.stringify(bidRequest));
+    }
+
+    // 실시간 업데이트 (하나 추가)
+    function updateBidInfo(bidData) {
+      document.getElementById('currentPrice').innerText = formatPrice(bidData.newPrice);
+      let increment = 1000;
+      if (currentItem && currentItem.bidIncrement) increment = currentItem.bidIncrement;
+      document.getElementById('bidAmount').value = (bidData.newPrice + increment).toLocaleString();
+
+      const historyContainer = document.getElementById('bidHistory');
+      if (historyContainer.querySelector('p')) historyContainer.innerHTML = '';
+
+      // 맨 위에 추가 (실시간 느낌)
+      const html = createHistoryItemHtml(bidData);
+      historyContainer.insertAdjacentHTML('afterbegin', html);
+    }
+
+    // 과거 기록 추가 (여러 개 추가)
+    function addHistoryToDom(bidData) {
+      const historyContainer = document.getElementById('bidHistory');
+      // 과거 기록은 그냥 순서대로 추가 (append) -> 하지만 최신순으로 오니까 append 하면 됨
+      const html = createHistoryItemHtml(bidData);
+      historyContainer.insertAdjacentHTML('beforeend', html);
+    }
+
+    function createHistoryItemHtml(bidData) {
+      const avatarChar = bidData.bidderName ? bidData.bidderName.charAt(0).toUpperCase() : '?';
+      return `
+          <div class="bid-history-item" style="background-color: #f0f7ff; transition: all 0.5s;">
+            <div class="bidder-info">
+              <div class="bidder-avatar">${avatarChar}</div>
+              <div>
+                <div class="fw-bold">${bidData.bidderName}</div>
+                <div class="bid-time">${bidData.bidTime}</div>
+              </div>
+            </div>
+            <div class="bid-price fw-bold text-primary">${formatPrice(bidData.newPrice)}</div>
+          </div>
+        `;
+    }
+
+    function formatPrice(price) {
+      return new Intl.NumberFormat('ko-KR').format(price) + '원';
+    }
+
+    function quickBid(amount) {
+      const input = document.getElementById('bidAmount');
+      let currentValue = parseInt(input.value.replace(/,/g, '')) || 0;
+      input.value = (currentValue + amount).toLocaleString();
+    }
+
+    // ⭐ [추가] 즉시 구매 함수
+    async function buyNow() {
+      if (!currentItem || !currentItem.buyNowPrice) return;
+
+      if (!userId) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (currentUserPoints < currentItem.buyNowPrice) {
+        alert('포인트가 부족합니다.');
+        return;
+      }
+
+      if (!confirm(`[${formatPrice(currentItem.buyNowPrice)}]에 즉시 구매하시겠습니까?\n구매 즉시 포인트가 차감되며 경매가 종료됩니다.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/auctions/${auctionId}/buy-now`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            auctionId: auctionId,
+            bidderId: userId
+          })
+        });
+
+        if (res.ok) {
+          alert('즉시 구매가 완료되었습니다! 축하합니다.');
+          window.location.reload(); // 새로고침하여 상태 확인
+        } else {
+          const msg = await res.text();
+          alert('구매 실패: ' + msg);
+        }
+      } catch (e) {
+        console.error(e);
+        alert('구매 요청 중 오류가 발생했습니다.');
+      }
+    }
+
+    let timerInterval;
+    function startTimer(endTimeString) {
+      if (!endTimeString) return;
+      const endTime = new Date(endTimeString).getTime();
+      function update() {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+        if (distance < 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timer').textContent = "경매 종료";
+          document.getElementById('timer').style.color = "red";
+          return;
+        }
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        let timeText = "";
+        if (days > 0) timeText += days + "일 ";
+        timeText += `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        document.getElementById('timer').textContent = timeText;
+      }
+      update();
+      timerInterval = setInterval(update, 1000);
+    }
+  </script>
+</body>
+
+</html>

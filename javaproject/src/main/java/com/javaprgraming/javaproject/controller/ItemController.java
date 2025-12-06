@@ -2,31 +2,27 @@
 
 package com.javaprgraming.javaproject.controller;
 
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable; // Cloudinary 업로드 옵션용
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.javaprgraming.javaproject.repository.ItemRepository;
 import com.javaprgraming.javaproject.repository.UserRepository;
 import com.javaprgraming.javaproject.table.Item;
 import com.javaprgraming.javaproject.table.ItemStatus;
 import com.javaprgraming.javaproject.table.User;
-
-// ======== ⭐ [시작] Cloudinary 관련 Import 추가 ========
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils; // Cloudinary 업로드 옵션용
-// ======== ⭐ [끝] Cloudinary 관련 Import 추가 ========
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-// import java.nio.file.Files; // <-- Cloudinary 사용 시 더 이상 필요 없음
-// import java.nio.file.Path;  // <-- Cloudinary 사용 시 더 이상 필요 없음
-// import java.nio.file.Paths; // <-- Cloudinary 사용 시 더 이상 필요 없음
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auctions")
@@ -44,19 +40,18 @@ public class ItemController {
     private Cloudinary cloudinary;
     // ======== ⭐ [끝] Cloudinary 객체 주입 ========
 
-
     // ======== ⭐ [시작] 로컬 폴더 생성 로직 삭제 ========
-    // private final Path rootLocation = Paths.get("uploads"); // <-- Cloudinary 사용 시 삭제
+    // private final Path rootLocation = Paths.get("uploads"); // <-- Cloudinary 사용
+    // 시 삭제
 
     public ItemController() {
         // try {
-        //     Files.createDirectories(rootLocation); // <-- Cloudinary 사용 시 삭제
+        // Files.createDirectories(rootLocation); // <-- Cloudinary 사용 시 삭제
         // } catch (IOException e) {
-        //     throw new RuntimeException("Could not initialize storage", e);
+        // throw new RuntimeException("Could not initialize storage", e);
         // }
     }
     // ======== ⭐ [끝] 로컬 폴더 생성 로직 삭제 ========
-
 
     /**
      * 경매 등록 (Cloudinary 이미지 업로드 처리 포함)
@@ -67,13 +62,12 @@ public class ItemController {
             @RequestParam("title") String title,
             @RequestParam("category") String category,
             @RequestParam("description") String description,
-            @RequestParam("startingPrice") Long startingPrice,
+            @RequestParam("startingPrice") long startingPrice,
             @RequestParam(value = "buyNowPrice", required = false) Long buyNowPrice,
-            @RequestParam("bidIncrement") Long bidIncrement,
+            @RequestParam("bidIncrement") long bidIncrement,
             @RequestParam("endTime") String endTimeString,
-            @RequestParam("sellerId") Long sellerId,
-            @RequestParam(value = "image", required = false) MultipartFile imageFile
-    ) {
+            @RequestParam("sellerId") long sellerId,
+            @RequestParam(value = "image", required = false) MultipartFile imageFile) {
         Map<String, Object> response = new HashMap<>();
 
         try {
@@ -103,14 +97,13 @@ public class ItemController {
                 // (파일의 바이트, "resource_type", "auto" 옵션)
                 // "resource_type", "auto"는 이미지, 비디오 등을 자동으로 감지하라는 의미입니다.
                 Map uploadResult = cloudinary.uploader().upload(
-                    imageFile.getBytes(),
-                    ObjectUtils.asMap("resource_type", "auto")
-                );
+                        imageFile.getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
 
                 // 2. (핵심) 업로드 성공 후, 반환된 '보안 URL'(https)을 가져옵니다.
                 // Cloudinary는 "url"(http)과 "secure_url"(https)을 반환합니다.
                 String imageUrl = uploadResult.get("secure_url").toString();
-                
+
                 // 3. DB에 Cloudinary의 https URL을 저장합니다.
                 item.setImageUrl(imageUrl);
 
@@ -132,12 +125,19 @@ public class ItemController {
         return response;
     }
 
+    @GetMapping("/{id}")
+    public Item getItemDetail(@PathVariable("id") long id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 상품이 존재하지 않습니다. id=" + id));
+    }
+
     /**
      * 메인 페이지 경매 목록 (기존과 동일)
      * GET /api/auctions
      */
     @GetMapping
     public List<Item> getAllAuctions() {
-        return itemRepository.findAll();
+        // ⭐ [수정] 경매 진행 중인 아이템만 조회
+        return itemRepository.findByStatus(ItemStatus.ON_AUCTION);
     }
 }
