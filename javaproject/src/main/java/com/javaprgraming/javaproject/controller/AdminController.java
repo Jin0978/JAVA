@@ -1,16 +1,27 @@
 package com.javaprgraming.javaproject.controller;
 
-import com.javaprgraming.javaproject.repository.ItemRepository;
-import com.javaprgraming.javaproject.repository.UserRepository;
-import com.javaprgraming.javaproject.table.Item;
-import com.javaprgraming.javaproject.table.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.javaprgraming.javaproject.repository.BidRepository;
+import com.javaprgraming.javaproject.repository.HistoryRepository;
+import com.javaprgraming.javaproject.repository.ItemRepository;
+import com.javaprgraming.javaproject.repository.UserRepository;
+import com.javaprgraming.javaproject.table.Item;
+import com.javaprgraming.javaproject.table.ItemStatus;
+import com.javaprgraming.javaproject.table.User;
 
 @Controller
 @RequestMapping("/api/admin")
@@ -21,6 +32,12 @@ public class AdminController {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private BidRepository bidRepository;
+    
+    @Autowired
+    private HistoryRepository historyRepository;
 
     // 모든 유저 조회
     @GetMapping("/users")
@@ -36,23 +53,43 @@ public class AdminController {
         return itemRepository.findAll();
     }
 
-    // 아이템 삭제
+    // ⭐ [수정됨] 아이템 삭제 (관련 기록도 함께 삭제)
     @DeleteMapping("/items/{itemId}")
     @ResponseBody
+    @Transactional // 도중에 에러나면 롤백
     public Map<String, Object> deleteItem(@PathVariable("itemId") Long itemId) {
         Map<String, Object> response = new HashMap<>();
+        
         if (itemId == null) {
             response.put("success", false);
             response.put("message", "아이템 ID가 없습니다.");
             return response;
         }
-        if (itemRepository.existsById(itemId)) {
-            itemRepository.deleteById(itemId);
-            response.put("success", true);
-        } else {
+        
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item == null) {
             response.put("success", false);
-            response.put("message", "아이템을 찾을 수 없습니다.");
+            response.put("message", "이미 삭제되었거나 없는 물품입니다.");
+            return response;
         }
+
+        try {
+            // 1. 자식 데이터 삭제 (순서 중요: 입찰 -> 거래내역 -> 아이템)
+            bidRepository.deleteByItem_Id(itemId);
+            historyRepository.deleteByItem_Id(itemId);
+
+            // 2. 부모 데이터(아이템) 삭제
+            itemRepository.deleteById(itemId);
+
+            response.put("success", true);
+            response.put("message", "물품과 관련 기록이 모두 삭제되었습니다.");
+            
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "삭제 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
         return response;
     }
 
@@ -74,9 +111,10 @@ public class AdminController {
         return response;
     }
 
-    // 유저 강제 탈퇴 (관리자용)
+    // ⭐ [수정됨] 유저 강제 탈퇴 (관리자용) - 물품 처리 포함
     @DeleteMapping("/users/{userId}")
     @ResponseBody
+    @Transactional
     public Map<String, Object> deleteUser(@PathVariable("userId") Long userId) {
         Map<String, Object> response = new HashMap<>();
         User user = userRepository.findById(userId).orElse(null);
@@ -87,7 +125,7 @@ public class AdminController {
             return response;
         }
 
-        // ⭐ [추가] 관리자 계정 삭제 방지
+        // 관리자 계정 삭제 방지
         if ("ADMIN".equals(user.getRole())) {
             response.put("success", false);
             response.put("message", "관리자 계정은 삭제할 수 없습니다.");
@@ -95,34 +133,22 @@ public class AdminController {
         }
 
         // 1. 진행 중인 경매 물품 삭제
-        // (주의: UserController의 로직과 동일하게 구현하거나, Service로 분리하는 것이 좋음.
-        // 여기서는 간단히 로직을 복사해서 사용)
-        // 실제로는 ItemStatus, ItemRepository 등을 사용하여 구현해야 함.
-        // 하지만 AdminController에는 이미 itemRepository가 주입되어 있음.
-
-        // * ItemStatus import 필요 (상단에 추가해야 함, 일단 로직만 작성)
-        // * 아래 로직은 UserController와 중복되므로 리팩토링 대상이지만,
-        // 빠른 구현을 위해 직접 작성함.
-
-        // 진행 중인 경매 물품 삭제
+        // (진행중, 종료됨, 취소됨 상태의 물품은 아예 삭제해버림 / 이미 팔린건 유지)
         List<Item> userItems = itemRepository.findBySeller_Id(userId);
         for (Item item : userItems) {
-            // ItemStatus.ON_AUCTION 등은 Enum이므로 import 필요
-            // 여기서는 간단히 삭제 처리 (모든 물품 삭제? 아니면 진행중만?)
-            // 요구사항: 강제 탈퇴 시 유저 정보 익명화 및 진행중 경매 취소
-            // UserController 로직 참조: ON_AUCTION, CLOSED, CANCELLED 삭제. SOLD 유지.
-
-            // Enum 비교를 위해 toString() 사용하거나 import 추가 필요.
-            // 안전하게 import 추가를 권장하지만, replace_file_content로 import까지 한 번에 처리하기 어려울 수 있음.
-            // 따라서 일단 삭제 로직만 구현.
-
-            String status = item.getStatus().name();
-            if ("ON_AUCTION".equals(status) || "CLOSED".equals(status) || "CANCELLED".equals(status)) {
+            if (item.getStatus() == ItemStatus.ON_AUCTION || 
+                item.getStatus() == ItemStatus.CLOSED || 
+                item.getStatus() == ItemStatus.CANCELLED) {
+                
+                // 물품 삭제 전 관련 기록 청소 (필수)
+                bidRepository.deleteByItem_Id(item.getId());
+                historyRepository.deleteByItem_Id(item.getId());
+                
                 itemRepository.delete(item);
             }
         }
 
-        // 2. 유저 정보 익명화
+        // 2. 유저 정보 익명화 (완전 삭제 대신 탈퇴 회원으로 변경)
         String anonymousName = "탈퇴한 유저_" + java.util.UUID.randomUUID().toString().substring(0, 8);
         user.setUsername(anonymousName);
         user.setPassword(""); // 비밀번호 삭제
